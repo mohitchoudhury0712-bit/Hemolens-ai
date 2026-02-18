@@ -141,23 +141,25 @@ if search_name:
 else:
     st.info(txt['inst'])
     
-    # --- LEFT EYE (WITH RGB FIX) ---
+    # --- LEFT EYE ---
     st.subheader(txt['up_l'])
     up_l = st.file_uploader("Upload Image", type=["jpg", "png", "jpeg"], key="l")
     if up_l:
-        img_l = Image.open(up_l).convert("RGB") # <--- YAHAN FIX KIYA HAI
-        sl_crop = st_cropper(img_l, box_color='#00FF00', key="sl", use_container_width=True)
-        cl_crop = st_cropper(img_l, box_color='#FF0000', key="cl", use_container_width=True)
+        img_l = Image.open(up_l).convert("RGB")
+        # Fix: use_container_width hata diya hai 
+        sl_crop = st_cropper(img_l, box_color='#00FF00', key="sl_f")
+        cl_crop = st_cropper(img_l, box_color='#FF0000', key="cl_f")
 
     st.markdown("---")
     
-    # --- RIGHT EYE (WITH RGB FIX) ---
+    # --- RIGHT EYE ---
     st.subheader(txt['up_r'])
     up_r = st.file_uploader("Upload Image", type=["jpg", "png", "jpeg"], key="r")
     if up_r:
-        img_r = Image.open(up_r).convert("RGB") # <--- YAHAN FIX KIYA HAI
-        sr_crop = st_cropper(img_r, box_color='#00FF00', key="sr", use_container_width=True)
-        cr_crop = st_cropper(img_r, box_color='#FF0000', key="cr", use_container_width=True)
+        img_r = Image.open(up_r).convert("RGB")
+        # Fix: use_container_width hata diya hai [cite: 19]
+        sr_crop = st_cropper(img_r, box_color='#00FF00', key="sr_f")
+        cr_crop = st_cropper(img_r, box_color='#FF0000', key="cr_f")
 
     if up_l and up_r:
         if st.button(txt['run_btn']):
