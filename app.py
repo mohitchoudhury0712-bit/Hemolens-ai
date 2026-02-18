@@ -14,7 +14,7 @@ except ImportError:
     os.system('pip install fpdf')
     from fpdf import FPDF
 
-# --- Setup (Badlav 1: Layout Centered for Mobile) ---
+# --- Setup (Mobile Optimized) ---
 st.set_page_config(
     page_title="HemoLens AI", 
     layout="centered", 
@@ -52,21 +52,9 @@ st.markdown("""
         padding: 15px; border-radius: 8px; color: #B71C1C;
         font-size: 14px; margin-top: 20px; text-align: left;
     }
-    .whatsapp-btn {
-        background-color: #25D366; color: white; padding: 12px 20px; 
-        border-radius: 10px; text-decoration: none; font-weight: bold; 
-        display: block; text-align: center; margin-top: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    .whatsapp-btn:hover { background-color: #128C7E; color: white; }
-
     .dev-footer {
-        text-align: center;
-        padding: 20px;
-        margin-top: 50px;
-        border-top: 1px solid #eee;
-        color: #666;
-        font-size: 14px;
+        text-align: center; padding: 20px; margin-top: 50px;
+        border-top: 1px solid #eee; color: #666; font-size: 14px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -82,9 +70,6 @@ def validate_red_color(roi_array):
     if (r - g) < 17: return False, "Skin Tone Detected"
     if r > g and r > b: return True, "Valid"
     return False, "Unknown Object"
-
-def clean_text(text):
-    return text.encode('ascii', 'ignore').decode('ascii')
 
 def generate_pdf(name, age, gender, diet, hb, status, diet_plan, advice):
     pdf = FPDF()
@@ -121,24 +106,17 @@ def save_data(name, age, gender, diet, hb, status):
     if not os.path.isfile(DB_FILE): df.to_csv(DB_FILE, index=False)
     else: df.to_csv(DB_FILE, mode='a', header=False, index=False)
 
-# ==========================================
-# LANGUAGE & TEXT (Badlav 2: Sidebar hatakar Main Page par)
-# ==========================================
+# UI Elements
 st.markdown(f'<div class="install-bar">📲 <b>Install App:</b> Menu (⋮) > Add to Home Screen</div>', unsafe_allow_html=True)
 st.markdown(f"""<div class="main-header"><h1>🩺 HemoLens AI</h1><p>Anemia Screening Tool</p></div>""", unsafe_allow_html=True)
 
 p_lang = st.selectbox("Choose Language / भाषा चुनें", ("English", "Hindi"))
 
 if p_lang == "Hindi":
-    txt = {
-        "sidebar_title": "👤 मरीज की जानकारी", "name_label": "मरीज का नाम", "age_label": "उम्र", "gender_label": "लिंग", "diet_label": "खान-पान", "g_opts": ("पुरुष", "महिला", "अन्य"), "d_opts": ("शाकाहारी", "मांसाहारी"), "hist_title": "📜 रिकॉर्ड खोजें", "search_label": "🔍 नाम खोजें", "graph_title": "Hb का उतार-चढ़ाव", "found_rec": "रिकॉर्ड मिले:", "no_rec": "कोई रिकॉर्ड नहीं मिला", "inst": "💡 **निर्देश:** लाल बॉक्स को पलक पर सेट करें।", "up_l": "बाईं आंख (Left Eye)", "up_r": "दाईं आंख (Right Eye)", "adj_title": "👁️ Adjust Box", "cap_l": "बाईं आंख", "cap_r": "दाईं आंख", "run_btn": "🚀 जांच शुरू करें", "err_name": "नाम लिखें!", "err_eye": "बॉक्स सही करें!", "hb_res": "Hb स्तर", "rec_title": "🥗 आहार सलाह:", "tip_title": "💡 सुझाव:", "table_t": "📊 सामान्य रेंज", "table_m": "👨 पुरुष: 13-17", "table_f": "👩 महिला: 12-15", "caution": "⚠️ AI टूल है, डॉक्टri जांच नहीं। परिणाम +/- 1 हो सकते हैं।", "dl_btn": "📥 रिपोर्ट PDF", "wa_btn": "📲 WhatsApp", "footer_txt": "Developed by <b>Mohit Choudhury</b>"
-    }
+    txt = {"name_label": "मरीज का नाम", "age_label": "उम्र", "gender_label": "लिंग", "diet_label": "खान-पान", "g_opts": ("पुरुष", "महिला", "अन्य"), "d_opts": ("शाकाहारी", "मांसाहारी"), "search_label": "🔍 नाम खोजें", "graph_title": "Hb का उतार-चढ़ाव", "found_rec": "रिकॉर्ड मिले:", "no_rec": "कोई रिकॉर्ड नहीं मिला", "inst": "💡 **निर्देश:** लाल बॉक्स को पलक पर सेट करें।", "up_l": "बाईं आंख (Left Eye)", "up_r": "दाईं आंख (Right Eye)", "run_btn": "🚀 जांच शुरू करें", "err_name": "नाम लिखें!", "err_eye": "बॉक्स सही करें!", "hb_res": "Hb स्तर", "caution": "⚠️ AI टूल है, डॉक्टरी जांच नहीं। परिणाम +/- 1 हो सकते हैं।", "dl_btn": "📥 रिपोर्ट PDF", "footer_txt": "Developed by <b>Mohit Choudhury</b>"}
 else:
-    txt = {
-        "sidebar_title": "👤 Patient Profile", "name_label": "Patient Name", "age_label": "Age", "gender_label": "Gender", "diet_label": "Diet", "g_opts": ("Male", "Female", "Other"), "d_opts": ("Vegetarian", "Non-Vegetarian"), "hist_title": "📜 History", "search_label": "🔍 Search Name", "graph_title": "Hb Trend", "found_rec": "Found:", "no_rec": "None.", "inst": "💡 **Instructions:** Set Red Box on inner eyelid.", "up_l": "Left Eye", "up_r": "Right Eye", "adj_title": "👁️ Adjust Box", "cap_l": "Left Eye", "cap_r": "Right Eye", "run_btn": "🚀 RUN ANALYSIS", "err_name": "Enter Name!", "err_eye": "Adjust Box!", "hb_res": "Hb Level", "rec_title": "🥗 Recommendation:", "tip_title": "💡 Tip:", "table_t": "📊 Normal Range", "table_m": "👨 Male: 13-17", "table_f": "👩 Female: 12-15", "caution": "⚠️ AI tool, NOT diagnosis. Results +/- 1. Consult doctor.", "dl_btn": "📥 Download PDF", "wa_btn": "📲 WhatsApp", "footer_txt": "Developed by <b>Mohit Choudhury</b>"
-    }
+    txt = {"name_label": "Patient Name", "age_label": "Age", "gender_label": "Gender", "diet_label": "Diet", "g_opts": ("Male", "Female", "Other"), "d_opts": ("Vegetarian", "Non-Vegetarian"), "search_label": "🔍 Search Name", "graph_title": "Hb Trend", "found_rec": "Found:", "no_rec": "None.", "inst": "💡 **Instructions:** Set Red Box on inner eyelid.", "up_l": "Left Eye", "up_r": "Right Eye", "run_btn": "🚀 RUN ANALYSIS", "err_name": "Enter Name!", "err_eye": "Adjust Box!", "hb_res": "Hb Level", "caution": "⚠️ AI tool, NOT diagnosis. Results +/- 1. Consult doctor.", "dl_btn": "📥 Download PDF", "footer_txt": "Developed by <b>Mohit Choudhury</b>"}
 
-# Profile Section
 col_m1, col_m2 = st.columns(2)
 with col_m1: p_name = st.text_input(txt["name_label"])
 with col_m2: p_age = st.number_input(txt["age_label"], 1, 100, 25)
@@ -162,19 +140,22 @@ if search_name:
 
 else:
     st.info(txt['inst'])
-    # (Badlav 3: Images stacked vertically for mobile)
+    
+    # --- LEFT EYE (WITH RGB FIX) ---
     st.subheader(txt['up_l'])
-    up_l = st.file_uploader("Upload Left Eye", type=["jpg", "png", "jpeg"], key="l")
+    up_l = st.file_uploader("Upload Image", type=["jpg", "png", "jpeg"], key="l")
     if up_l:
-        img_l = Image.open(up_l)
+        img_l = Image.open(up_l).convert("RGB") # <--- YAHAN FIX KIYA HAI
         sl_crop = st_cropper(img_l, box_color='#00FF00', key="sl", use_container_width=True)
         cl_crop = st_cropper(img_l, box_color='#FF0000', key="cl", use_container_width=True)
 
     st.markdown("---")
+    
+    # --- RIGHT EYE (WITH RGB FIX) ---
     st.subheader(txt['up_r'])
-    up_r = st.file_uploader("Upload Right Eye", type=["jpg", "png", "jpeg"], key="r")
+    up_r = st.file_uploader("Upload Image", type=["jpg", "png", "jpeg"], key="r")
     if up_r:
-        img_r = Image.open(up_r)
+        img_r = Image.open(up_r).convert("RGB") # <--- YAHAN FIX KIYA HAI
         sr_crop = st_cropper(img_r, box_color='#00FF00', key="sr", use_container_width=True)
         cr_crop = st_cropper(img_r, box_color='#FF0000', key="cr", use_container_width=True)
 
@@ -182,22 +163,25 @@ else:
         if st.button(txt['run_btn']):
             if not p_name: st.error(txt['err_name'])
             else:
-                # Same formula as your version
-                def calc_hb(s, c):
-                    s_arr, c_arr = np.array(s), np.array(c)
-                    ref_w, avg_c = np.mean(s_arr, axis=(0,1)), np.mean(c_arr, axis=(0,1))
-                    ratio = (avg_c[0]/(ref_w[0]+1e-6)) / ((avg_c[1]/(ref_w[1]+1e-6) + avg_c[2]/(ref_w[2]+1e-6))/2 + 1e-6)
-                    hb_val = 2.0 + (ratio * 6.0)
-                    return max(6.0, min(hb_val, 16.5))
+                valid_l, _ = validate_red_color(np.array(cl_crop))
+                valid_r, _ = validate_red_color(np.array(cr_crop))
+                if not valid_l or not valid_r: st.error(txt['err_eye'])
+                else:
+                    def calc_hb(s, c):
+                        s_arr, c_arr = np.array(s), np.array(c)
+                        ref_w = np.mean(s_arr, axis=(0,1))
+                        avg_c = np.mean(c_arr, axis=(0,1))
+                        ratio = (avg_c[0]/(ref_w[0]+1e-6)) / ((avg_c[1]/(ref_w[1]+1e-6) + avg_c[2]/(ref_w[2]+1e-6))/2 + 1e-6)
+                        return max(6.0, min(2.0 + (ratio * 6.0), 16.5))
 
-                hb_final = round((calc_hb(sl_crop, cl_crop) + calc_hb(sr_crop, cr_crop)) / 2, 1)
-                res = get_expert_diet(hb_final, p_diet, p_lang)
-                save_data(p_name, p_age, p_gender, p_diet, hb_final, res['status'])
+                    hb_final = round((calc_hb(sl_crop, cl_crop) + calc_hb(sr_crop, cr_crop)) / 2, 1)
+                    res = get_expert_diet(hb_final, p_diet, p_lang)
+                    save_data(p_name, p_age, p_gender, p_diet, hb_final, res['status'])
 
-                st.markdown(f'<div class="result-card"><p>{txt["hb_res"]}</p><div class="hb-val">{hb_final}</div><p><b>{res["status"]}</b></p></div>', unsafe_allow_html=True)
-                st.markdown(f'<div class="caution-box">{txt["caution"]}</div>', unsafe_allow_html=True)
-                
-                pdf_bytes = generate_pdf(p_name, p_age, p_gender, p_diet, hb_final, res['status'], res['plan'], res['advice'])
-                st.download_button(txt['dl_btn'], pdf_bytes, f"HemoLens_{p_name}.pdf")
+                    st.markdown(f'<div class="result-card"><p>{txt["hb_res"]}</p><div class="hb-val">{hb_final}</div><p><b>{res["status"]}</b></p></div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="caution-box">{txt["caution"]}</div>', unsafe_allow_html=True)
+                    
+                    pdf_bytes = generate_pdf(p_name, p_age, p_gender, p_diet, hb_final, res['status'], res['plan'], res['advice'])
+                    st.download_button(txt['dl_btn'], pdf_bytes, f"HemoLens_{p_name}.pdf")
 
 st.markdown(f'<div class="dev-footer">{txt["footer_txt"]}</div>', unsafe_allow_html=True)
